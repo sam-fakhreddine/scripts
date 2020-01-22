@@ -1,0 +1,9 @@
+   UserData:
+    Fn::Base64: !Sub |
+     #!/bin/bash -xe
+     yum update -y
+     region=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | awk -F'"' '/\"region\"/ { print $4 }')
+     id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+     cbver=$(cat /opt/couchbase/VERSION.txt)
+     aws ec2 create-tags --resources $id --tags Key=CouchbaseVersion,Value=$cbver --region $region
+     /sbin/shutdown -r now  
